@@ -1,3 +1,4 @@
+import re
 from collections import OrderedDict
 from pprint import pprint
 
@@ -16,10 +17,9 @@ class FeatureExtractor:
     def del_hyphen_parts(self, dataset):
         for i, sent in enumerate(dataset.copy()):
             for j, word in enumerate(sent):
-                if word['upostag'] == '_':
+                if type(word['id']) == tuple:
                     self.hyphen_parts_indexes[i] = {'pre_hyphen': j + 1,
                                                     'post_hyphen': j + 2}
-
                     dataset[i].pop(j)
         return dataset
 

@@ -1,5 +1,3 @@
-import time
-import uuid
 import pickle
 import os.path
 import logging
@@ -68,24 +66,29 @@ class Pipeline:
         # ))
         #
         labels = self.clfr_pos.classes_.copy()
-        labels.remove('X')
+        if 'X' in labels:
+            labels.remove('X')
+        if 'UNKN' in labels:
+            labels.remove('UNKN')
+        if '_' in labels:
+            labels.remove('_')
 
-        print('Lang {}. Metrics for target labels (without "X" label):'.format(self.lang_prefix))
+        print('Lang {}. Metrics for target labels (without "X"/"UNKN"/"_" label):'.format(self.lang_prefix))
         print(metrics.flat_classification_report(
             y_true, y_pred, labels=labels
         ))
 
 
 if __name__ == '__main__':
-    pipeline = Pipeline(lang_prefix='evn')
-    pipeline.pipeline()
-    pipeline = Pipeline(lang_prefix='vep')
-    pipeline.pipeline()
-    pipeline = Pipeline(lang_prefix='sel')
-    pipeline.pipeline()
+    # pipeline = Pipeline(lang_prefix='evn')
+    # pipeline.pipeline()
+    # pipeline = Pipeline(lang_prefix='sel')
+    # pipeline.pipeline()
     pipeline = Pipeline(lang_prefix='krl')
     pipeline.pipeline()
     pipeline = Pipeline(lang_prefix='lud')
     pipeline.pipeline()
     pipeline = Pipeline(lang_prefix='olo')
+    pipeline.pipeline()
+    pipeline = Pipeline(lang_prefix='vep')
     pipeline.pipeline()
