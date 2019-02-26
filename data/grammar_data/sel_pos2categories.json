@@ -1,0 +1,39 @@
+{
+    "ADJ": [
+        "Case",
+        "NumType",
+        "Number",
+        "Person"
+    ],
+    "ADP": [
+        "Case"
+    ],
+    "ADV": [],
+    "CCONJ": [],
+    "DET": [],
+    "INTJ": [],
+    "NOUN": [
+        "Case",
+        "Number",
+        "Person"
+    ],
+    "NUM": [
+        "Case",
+        "Number",
+        "Person"
+    ],
+    "PART": [],
+    "PRON": [
+        "Case",
+        "Number",
+        "Person"
+    ],
+    "VERB": [
+        "Mood",
+        "Number",
+        "Person",
+        "Tense",
+        "VerbForm"
+    ],
+    "X": []
+}

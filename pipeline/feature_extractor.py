@@ -1,7 +1,6 @@
-import re
 from collections import OrderedDict
-from pprint import pprint
 
+import numpy as np
 from nltk.util import ngrams
 
 
@@ -13,8 +12,20 @@ class FeatureExtractor:
     def __init__(self, features=None):
         self.features = features
         self.hyphen_parts_indexes = OrderedDict()
+        self.morpheme_preproc = None
+        self.morphemes = None
+
+    def set_morpheme_preproc(self, morpheme_preproc):
+        self.morpheme_preproc = morpheme_preproc
+        self.morphemes = self.morpheme_preproc.morphemes
+
+    def set_morphemes_fold(self, morphemes_fold):
+        self.morphemes = morphemes_fold
 
     def del_hyphen_parts(self, dataset):
+        """
+        Удаление из train'а токенов дефисных написаний (с id-шниками типа 1-2 и без тегов)
+        """
         for i, sent in enumerate(dataset.copy()):
             for j, word in enumerate(sent):
                 if type(word['id']) == tuple:
@@ -134,7 +145,30 @@ class FeatureExtractor:
         trigr_features = dict(zip(['tri_1', 'tri_2', 'tri_3', 'tri_4', 'tri_5'], trigrams))
         return bigr_features, trigr_features
 
-    def word2features(self, sent, i, sent_id, postags=False):
+    def empty_morphemes(self):
+        empty = np.zeros_like(self.morpheme_preproc.labels, dtype=int)
+        empty = empty.tolist()
+        return dict(zip(self.morpheme_preproc.label2ind.keys(), empty))
+
+    def morpheme_features(self, sent, i, sent_id):
+        word = sent[i]['form']
+        if i < len(self.morphemes[sent_id]):
+            word_with_morphemes = self.morphemes[sent_id][i]
+            if word != word_with_morphemes['form']:
+                # print('empty')
+                # print(sent)
+                # print(self.morphemes[sent_id])
+                return self.empty_morphemes()
+            return dict(zip(self.morpheme_preproc.label2ind.keys(), self.morpheme_preproc.one_hot(word_with_morphemes)))
+        else:
+            # print('empty')
+            # print(sent)
+            # print(self.morphemes[sent_id])
+            # assert 0 == 1
+
+            return self.empty_morphemes()
+
+    def word2features(self, sent, i, sent_id, add_postags=False, ngrams=False):
         """
         Функция, формирующая полный список признаков:
             1) токен в uppercase (или нет);
@@ -150,7 +184,7 @@ class FeatureExtractor:
             11) если токен является началом предложения, 'EOS' = True;
             12) биграммы;
             13) триграммы.
-        Если значение postags = True, то в качестве признака добавляется postag
+        Если значение add_postags = True, то в качестве признака добавляется postag
         (для обучения классификаторов, предсказывающих грамматические категории).
         """
         word = sent[i]['form']
@@ -181,20 +215,42 @@ class FeatureExtractor:
                 window = left_context[1]
                 window.append(word)
                 window.extend(right_context[1])
-            # ngrams = self.ngrams(window)
-            # features.update(ngrams[0])
-            # features.update(ngrams[1])
+            if ngrams:
+                ngrams = self.ngrams(window)
+                features.update(ngrams[0])
+                features.update(ngrams[1])
         else:
             features['BOS'] = True
-        if postags == True:
+        if self.morphemes:
+            features.update(self.morpheme_features(sent, i, sent_id))
+        if add_postags == True:
             features.update({'postag': sent[i]['upostag']})
         return features
 
-    def sent2features(self, sent, sent_id, postags=False):
+    def sent2features(self, sent, sent_id, postags=False, ngrams=False):
         """
         Все признаки для одного предложения.
         """
-        return [self.word2features(sent, i, sent_id, postags) for i in range(len(sent))]
+        return [self.word2features(sent, i, sent_id, postags, ngrams) for i in range(len(sent))]
+
+    def sent2features_gc(self, sent, sent_id, category, pos_tags):
+        """
+        Все признаки для одного предложения.
+        """
+        sent_features = []
+        sent_labels = []
+        for i in range(len(sent)):
+            if sent[i]['upostag'] in ['NOUN', 'VERB', 'ADJ', 'PRON', 'ADP', 'AUX', 'ADV']:
+                if sent[i]['feats']:
+                    if sent[i]['upostag'] in pos_tags:
+                        sent_features.append(self.word2features(sent, i, sent_id, add_postags=True))
+                        sent_labels.append(self.word2label_gc(sent[i], category))
+            else:
+                if sent[i]['upostag'] in pos_tags:
+                    sent_features.append(self.word2features(sent, i, sent_id, add_postags=True))
+                    sent_labels.append(self.word2label_gc(sent[i], category))
+        assert(len(sent_features) == len(sent_labels))
+        return sent_features, sent_labels
 
     def word2label_gc(self, word, category):
         """
@@ -214,6 +270,7 @@ class FeatureExtractor:
         """
         if pos == True:
             sent_labels = [sent[i]['upostag'] if sent[i]['upostag'] != 'PROPN' else 'NOUN' for i in range(len(sent))]
+            sent_labels = [l if l != '_' else 'X' for l in sent_labels ]
         else:
             sent_labels = [self.word2label_gc(sent[i], category) for i in range(len(sent))]
         return sent_labels

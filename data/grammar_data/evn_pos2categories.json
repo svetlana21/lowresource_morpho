@@ -1,0 +1,81 @@
+{
+    "ADJ": [
+        "Case",
+        "Degree",
+        "Mood",
+        "Number",
+        "Poss",
+        "PossNumber",
+        "PossPerson"
+    ],
+    "ADV": [],
+    "CCONJ": [],
+    "DET": [
+        "Case",
+        "Definite",
+        "Number",
+        "Poss",
+        "PossNumber",
+        "PossPerson",
+        "Reflex"
+    ],
+    "INTJ": [],
+    "NOUN": [
+        "Case",
+        "Number",
+        "Poss",
+        "PossNumber",
+        "PossPerson",
+        "Reflex"
+    ],
+    "NUM": [
+        "Case",
+        "Number",
+        "Poss",
+        "PossNumber",
+        "PossPerson",
+        "PronType"
+    ],
+    "PART": [],
+    "PRON": [
+        "Aspect",
+        "Case",
+        "Clusivity",
+        "Definite",
+        "Number",
+        "Person",
+        "Poss",
+        "PossNumber",
+        "PossPerson",
+        "PronType",
+        "Reflex"
+    ],
+    "PROPN": [
+        "Case",
+        "Definite",
+        "Mood",
+        "Number",
+        "Poss",
+        "PossNumber",
+        "PossPerson",
+        "PronType",
+        "Reflex"
+    ],
+    "SCONJ": [],
+    "VERB": [
+        "Aspect",
+        "Clusivity",
+        "Mood",
+        "Number",
+        "Person",
+        "PersonNum",
+        "Poss",
+        "PossNumber",
+        "PossPerson",
+        "Reflex",
+        "Tense",
+        "VerbForm",
+        "Voice"
+    ],
+    "X": []
+}

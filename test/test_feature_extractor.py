@@ -1,8 +1,7 @@
 import unittest
-import pprint as pp
 from collections import OrderedDict
 
-from feature_extractor import FeatureExtractor
+from pipeline.feature_extractor import FeatureExtractor
 
 
 class TestFeatureExtr(unittest.TestCase):
@@ -283,8 +282,8 @@ class TestFeatureExtr(unittest.TestCase):
                                    'tri_1': 'Оторвавшись от бумаг', 'tri_2': 'от бумаг ,',
                                    'word': 'Оторвавшись',
                                    'word_is_digit': False, 'word_is_title': True, 'word_is_upper': False}
-        fact_result_without_postag = self.test_feature_extr.word2features(self.test_sent, test_i, 0)
-        fact_result_with_postag = self.test_feature_extr.word2features(self.test_sent, test_i, 0, True)
+        fact_result_without_postag = self.test_feature_extr.word2features(self.test_sent, test_i, 0, ngrams=True)
+        fact_result_with_postag = self.test_feature_extr.word2features(self.test_sent, test_i, 0, True, ngrams=True)
         self.assertCountEqual(true_result_without_postag, fact_result_without_postag)
         self.assertCountEqual(true_result_with_postag, fact_result_with_postag)
 

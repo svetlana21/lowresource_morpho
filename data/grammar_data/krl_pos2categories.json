@@ -1,0 +1,38 @@
+{
+    "ADJ": [
+        "Case",
+        "Degree",
+        "Number"
+    ],
+    "AUX": [
+        "Mood",
+        "Number",
+        "Person",
+        "VebForm"
+    ],
+    "CCONJ": [],
+    "NOUN": [
+        "Case",
+        "Number"
+    ],
+    "PRON": [
+        "Case",
+        "Number"
+    ],
+    "PROPN": [
+        "Case",
+        "Number"
+    ],
+    "VERB": [
+        "InfForm",
+        "Mood",
+        "Number",
+        "PartForm",
+        "Person",
+        "Polarity",
+        "Tense",
+        "VebForm",
+        "Voice"
+    ],
+    "X": []
+}
