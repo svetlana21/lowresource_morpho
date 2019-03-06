@@ -95,19 +95,19 @@ class Pipeline:
             X_test = [self.feature_extractor.sent2features(sent, sent_id) for sent_id, sent in enumerate(fold_test)]
             y_test = [self.feature_extractor.sent2labels(sent, category=None, pos=True) for sent in fold_test]
 
-            # logging.info('Training POS classifier...')
-            # self.clfr_pos.fit(X_train, y_train)
-            # y_pred = self.clfr_pos.predict(X_test)
-            #
-            # # Из оценки исключаем UNKN-классы
-            # labels = self.clfr_pos.classes_.copy()
-            # if 'X' in labels:
-            #     labels.remove('X')
-            #
-            # logging.info('Metrics for target labels (without "X" label):')
-            # logging.info(metrics.flat_classification_report(
-            #     y_test, y_pred, labels=labels
-            # ))
+            logging.info('Training POS classifier...')
+            self.clfr_pos.fit(X_train, y_train)
+            y_pred = self.clfr_pos.predict(X_test)
+
+            # Из оценки исключаем UNKN-классы
+            labels = self.clfr_pos.classes_.copy()
+            if 'X' in labels:
+                labels.remove('X')
+
+            logging.info('Metrics for target labels (without "X" label):')
+            logging.info(metrics.flat_classification_report(
+                y_test, y_pred, labels=labels
+            ))
 
             if categories:
                 # цикл, создающий модели для грам. категорий
@@ -140,9 +140,9 @@ class Pipeline:
         X_train = [self.feature_extractor.sent2features(sent, sent_id) for sent_id, sent in enumerate(self.train)]
         y_train = [self.feature_extractor.sent2labels(sent, category=None, pos=True) for sent in self.train]
 
-        # logging.info('Training POS classifier...')
-        # self.clfr_pos.fit(X_train, y_train)
-        # self.data_loader.pickle_model(lang=self.lang_prefix, task='pos', model=self.clfr_pos)
+        logging.info('Training POS classifier...')
+        self.clfr_pos.fit(X_train, y_train)
+        self.data_loader.pickle_model(lang=self.lang_prefix, task='pos', model=self.clfr_pos)
 
         if categories:
             # цикл, создающий модели для грам. категорий
